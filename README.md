@@ -1,9 +1,7 @@
-Unity
+Unity Game Framework
 =====
 
-unity script share
-
-envirment: Unity + NGUI
+environment: Unity(5.0+) + NGUI
 
 Author: gyd
 https://www.facebook.com/barbariangyd
