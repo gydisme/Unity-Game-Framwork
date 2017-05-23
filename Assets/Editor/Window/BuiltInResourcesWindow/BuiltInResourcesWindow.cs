@@ -20,7 +20,6 @@ public class BuiltInResourcesWindow : EditorWindow
 
 	private List<Drawing> Drawings;
 
-	private List<UnityEngine.Object> _objects;
 	private float _scrollPos;
 	private float _maxY;
 	private Rect _oldPosition;
@@ -30,8 +29,10 @@ public class BuiltInResourcesWindow : EditorWindow
 
 	private string _search = "";
 	private bool _showStyleText = true;
+	private bool _showIconOriginalSize = true;
 
-	private string[] _buildIcons = new string[]{
+	private string[] _buildIcons = new string[]
+	{
 		"ScriptableObject Icon",
 		"_Popup",
 		"_Help",
@@ -375,10 +376,8 @@ public class BuiltInResourcesWindow : EditorWindow
 
 		GUILayout.EndHorizontal();
 
-		if( _showingStyles )
-			GUILayout.BeginHorizontal();
-		
-		string newSearch = GUILayout.TextField(_search);
+		GUILayout.BeginHorizontal();
+		string newSearch = EditorGUILayout.DelayedTextField( _search );
 		if (newSearch != _search)
 		{
 			_search = newSearch;
@@ -393,9 +392,18 @@ public class BuiltInResourcesWindow : EditorWindow
 				_showStyleText = newShow;
 				Drawings = null;
 			}
-
-			GUILayout.EndHorizontal();
 		}
+		else
+		{
+			bool newShow = GUILayout.Toggle( _showIconOriginalSize, "Show Original Size", GUILayout.Width( 150 ) );
+			if( newShow != _showIconOriginalSize )
+			{
+				_showIconOriginalSize = newShow;
+				Drawings = null;
+			}
+		}
+
+		GUILayout.EndHorizontal();
 
 		float top = 36;
 
@@ -458,20 +466,14 @@ public class BuiltInResourcesWindow : EditorWindow
 			}
 			else if( _showingIcons )
 			{
-				if( _objects == null )
-				{
-					_objects = new List<UnityEngine.Object>( Resources.FindObjectsOfTypeAll( typeof( Texture ) ) );
-					_objects.Sort( ( pA, pB ) => System.String.Compare( pA.name, pB.name, System.StringComparison.OrdinalIgnoreCase ) );
-				}
-
 				float rowHeight = 0.0f;
 
 				foreach( string name in _buildIcons )
 				{
-					if( name == "" )
+					if( string.IsNullOrEmpty( name ) )
 						continue;
 
-					if (lowerSearch != "" && !name.ToLower().Contains(lowerSearch))
+					if( !string.IsNullOrEmpty( lowerSearch ) && !name.ToLower().Contains( lowerSearch ))
 						continue;
 
 					GUIContent content = EditorGUIUtility.IconContent( name );
@@ -479,7 +481,7 @@ public class BuiltInResourcesWindow : EditorWindow
 					Drawing draw = new Drawing();
 
 					Vector2 nameSize = GUI.skin.button.CalcSize( new GUIContent( name ) );
-					Vector2 contentSize = GUI.skin.button.CalcSize( content );
+					Vector2 contentSize = _showIconOriginalSize ? GUI.skin.button.CalcSize( content ) : new Vector2( 45, 45 ) ;
 
 					float width = Mathf.Max(
 						nameSize.x,
@@ -506,7 +508,7 @@ public class BuiltInResourcesWindow : EditorWindow
 						if( GUILayout.Button( name, GUILayout.Width( width ) ) )
 							CopyText( "EditorGUIUtility.IconContent( \"" + name + "\" )" );
 
-						Rect textureRect = GUILayoutUtility.GetRect( contentSize.x, contentSize.x, contentSize.y, contentSize.y, GUILayout.ExpandHeight( false ), GUILayout.ExpandWidth( false ) );
+						Rect textureRect = GUILayoutUtility.GetRect( contentSize.x, width, contentSize.y, height, GUILayout.ExpandHeight( false ), GUILayout.ExpandWidth( false ) );
 						GUI.Label( textureRect, content );
 					};
 
@@ -535,6 +537,8 @@ public class BuiltInResourcesWindow : EditorWindow
 		foreach( Drawing draw in Drawings )
 		{
 			Rect newRect = draw.Rect;
+			if( _scrollPos < 0 )
+				_scrollPos = 0;
 			newRect.y -= _scrollPos;
 
 			if( newRect.y + newRect.height > 0 && newRect.y < areaHeight )
