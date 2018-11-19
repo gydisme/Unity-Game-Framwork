@@ -67,6 +67,7 @@ namespace HierarchyHelper
 
 		static void OnHierarchyChangeCheck()
 		{
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 			bool found = false;
 			for( int i=0;i<_hierarchySnapshots.Count;)
 			{
