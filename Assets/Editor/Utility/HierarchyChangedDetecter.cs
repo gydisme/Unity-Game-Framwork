@@ -50,11 +50,16 @@ namespace HierarchyHelper
 				_hierarchyTransforms.Add( t );
 			}
 
-			EditorApplication.hierarchyWindowChanged += OnHierarchyChangeCheck;
-			#if Debug
+#if UNITY_2017 || UNITY_5_6
+            EditorApplication.hierarchyWindowChanged += OnHierarchyChangeCheck;
+#else
+            EditorApplication.hierarchyChanged += OnHierarchyChangeCheck;
+#endif
+
+#if Debug
 			OnHierarchyChnaged += OnHierarchyChange;
-			#endif
-		}
+#endif
+        }
 
 		static HierarchySnapshot CreateSnapshot( Transform t )
 		{
