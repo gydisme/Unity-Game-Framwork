@@ -15,12 +15,12 @@ public class Monitor4AnimationCurve : EditorWindow
 			return;
 
 		_monitorTransform = null;
-		HierarchyChangedDetector.OnHierarchyChanged += MonitorGameObject;
+		HierarchyChangedDetector.OnHierarchyChange += MonitorGameObject;
 	}
 
 	void OnDisable()
 	{
-		HierarchyChangedDetector.OnHierarchyChanged -= MonitorGameObject;
+		HierarchyChangedDetector.OnHierarchyChange -= MonitorGameObject;
 	}
 
 	string GetRelativeName( Transform t, bool includeSelf )

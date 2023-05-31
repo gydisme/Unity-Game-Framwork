@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace HierarchyHelper
 {
@@ -25,8 +26,7 @@ namespace HierarchyHelper
 		readonly static List<HierarchySnapshot> _hierarchySnapshots = null;
 		readonly static List<Transform> _hierarchyTransforms = null;
 
-		public delegate void onHierarchyChanged( EChangeType type, HierarchySnapshot snapshot );
-		public static onHierarchyChanged OnHierarchyChanged = delegate( EChangeType type, HierarchySnapshot snapshot ) {};
+		public static Action<EChangeType, HierarchySnapshot> OnHierarchyChange = ( EChangeType type, HierarchySnapshot snapshot ) => {};
 
 		static HierarchyChangedDetector()
 		{
@@ -64,14 +64,14 @@ namespace HierarchyHelper
 				{
 					_hierarchySnapshots.RemoveAt( i );
 					_hierarchyTransforms.RemoveAt( i );
-					OnHierarchyChanged( EChangeType.Deleted, h );
+					OnHierarchyChange( EChangeType.Deleted, h );
 					found = true;
 					continue;
 				}
 
 				else if( h.parent != h.me.parent )
 				{
-					OnHierarchyChanged( EChangeType.Parented, h );
+					OnHierarchyChange( EChangeType.Parented, h );
 					h.parent = h.me.parent;
 					found = true;
 					break;
@@ -79,7 +79,7 @@ namespace HierarchyHelper
 
 				else if( h.name != h.me.name )
 				{
-					OnHierarchyChanged( EChangeType.Renamed, h );
+					OnHierarchyChange( EChangeType.Renamed, h );
 					h.name = h.me.name;
 					found = true;
 					break;
@@ -99,7 +99,7 @@ namespace HierarchyHelper
 						_hierarchySnapshots.Add( h );
 						_hierarchyTransforms.Add( t );
 
-						OnHierarchyChanged( EChangeType.Created, h );
+						OnHierarchyChange( EChangeType.Created, h );
 					}
 				}
 			}
