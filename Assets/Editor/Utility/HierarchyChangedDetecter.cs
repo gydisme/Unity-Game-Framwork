@@ -1,19 +1,10 @@
-﻿#define Debug_
-
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Linq;
-using System.Reflection;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
+
 namespace HierarchyHelper
 {
-	#if UNITY_EDITOR
 	[InitializeOnLoad]
-	#endif
 	public static class HierarchyChangedDetecter
 	{
 		public class HierarchySnapshot
@@ -31,8 +22,8 @@ namespace HierarchyHelper
 			Deleted
 		}
 
-		static List<HierarchySnapshot> _hierarchySnapshots = null;
-		static List<Transform> _hierarchyTransforms = null;
+		readonly static List<HierarchySnapshot> _hierarchySnapshots = null;
+		readonly static List<Transform> _hierarchyTransforms = null;
 
 		public delegate void onHierarchyChnaged( EChangeType type, HierarchySnapshot snapshot );
 		public static onHierarchyChnaged OnHierarchyChnaged = delegate( EChangeType type, HierarchySnapshot snapshot ) {};
@@ -50,12 +41,12 @@ namespace HierarchyHelper
 				_hierarchyTransforms.Add( t );
 			}
 
-      EditorApplication.hierarchyChanged += OnHierarchyChangeCheck;
+			EditorApplication.hierarchyChanged += OnHierarchyChangeCheck;
 
 #if Debug
 			OnHierarchyChnaged += OnHierarchyChange;
 #endif
-        }
+		}
 
 		static HierarchySnapshot CreateSnapshot( Transform t )
 		{
@@ -68,7 +59,7 @@ namespace HierarchyHelper
 
 		static void OnHierarchyChangeCheck()
 		{
-            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 			bool found = false;
 			for( int i=0;i<_hierarchySnapshots.Count;)
 			{
@@ -116,17 +107,6 @@ namespace HierarchyHelper
 					}
 				}
 			}
-		}
-
-		static void OnHierarchyChange( EChangeType type, HierarchySnapshot snapshot )
-		{
-			string log = type.ToString();
-			if( snapshot.me != null )
-			{
-				log += " name:" + snapshot.me.name + ", parent: " + snapshot.me.parent;
-			}
-			log += " snapshot name: " + snapshot.name + ", parent: " + snapshot.parent;
-			Debug.Log( log );
 		}
 	}
 }
