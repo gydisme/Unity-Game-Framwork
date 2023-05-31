@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using HierarchyHelper;
 
-public class Monitor4AnimationCurve : EditorWindow
+public class AnimationCurveMonitor : EditorWindow
 {
 	private Transform _monitorTransform = null;
 
@@ -156,9 +156,9 @@ public class Monitor4AnimationCurve : EditorWindow
 		_monitorTransform = EditorGUILayout.ObjectField( "Monitor", _monitorTransform, typeof( Transform ), true ) as Transform;
 	}
 
-	[MenuItem("Tools/Monitor for Animation Curve", false, 0)]
+	[MenuItem("Tools/Animation Curve Monitor", false, 0)]
 	static public void OpenWindow()
 	{
-		EditorWindow.GetWindow<Monitor4AnimationCurve>( false, "Monitor4AnimationCurve", true );
+		EditorWindow.GetWindow<AnimationCurveMonitor>( false, nameof(AnimationCurveMonitor), true );
 	}
 }
