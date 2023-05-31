@@ -5,7 +5,7 @@ using UnityEditor;
 namespace HierarchyHelper
 {
 	[InitializeOnLoad]
-	public static class HierarchyChangedDetecter
+	public static class HierarchyChangedDetector
 	{
 		public class HierarchySnapshot
 		{
@@ -25,10 +25,10 @@ namespace HierarchyHelper
 		readonly static List<HierarchySnapshot> _hierarchySnapshots = null;
 		readonly static List<Transform> _hierarchyTransforms = null;
 
-		public delegate void onHierarchyChnaged( EChangeType type, HierarchySnapshot snapshot );
-		public static onHierarchyChnaged OnHierarchyChnaged = delegate( EChangeType type, HierarchySnapshot snapshot ) {};
+		public delegate void onHierarchyChanged( EChangeType type, HierarchySnapshot snapshot );
+		public static onHierarchyChanged OnHierarchyChanged = delegate( EChangeType type, HierarchySnapshot snapshot ) {};
 
-		static HierarchyChangedDetecter()
+		static HierarchyChangedDetector()
 		{
 			_hierarchySnapshots = new List<HierarchySnapshot>();
 			_hierarchyTransforms = new List<Transform>();
@@ -41,11 +41,7 @@ namespace HierarchyHelper
 				_hierarchyTransforms.Add( t );
 			}
 
-			EditorApplication.hierarchyChanged += OnHierarchyChangeCheck;
-
-#if Debug
-			OnHierarchyChnaged += OnHierarchyChange;
-#endif
+			EditorApplication.hierarchyChanged += HandleHierarchyChange;
 		}
 
 		static HierarchySnapshot CreateSnapshot( Transform t )
@@ -57,7 +53,7 @@ namespace HierarchyHelper
 			return h;
 		}
 
-		static void OnHierarchyChangeCheck()
+		static void HandleHierarchyChange()
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 			bool found = false;
@@ -68,14 +64,14 @@ namespace HierarchyHelper
 				{
 					_hierarchySnapshots.RemoveAt( i );
 					_hierarchyTransforms.RemoveAt( i );
-					OnHierarchyChnaged( EChangeType.Deleted, h );
+					OnHierarchyChanged( EChangeType.Deleted, h );
 					found = true;
 					continue;
 				}
 
 				else if( h.parent != h.me.parent )
 				{
-					OnHierarchyChnaged( EChangeType.Parented, h );
+					OnHierarchyChanged( EChangeType.Parented, h );
 					h.parent = h.me.parent;
 					found = true;
 					break;
@@ -83,7 +79,7 @@ namespace HierarchyHelper
 
 				else if( h.name != h.me.name )
 				{
-					OnHierarchyChnaged( EChangeType.Renamed, h );
+					OnHierarchyChanged( EChangeType.Renamed, h );
 					h.name = h.me.name;
 					found = true;
 					break;
@@ -103,7 +99,7 @@ namespace HierarchyHelper
 						_hierarchySnapshots.Add( h );
 						_hierarchyTransforms.Add( t );
 
-						OnHierarchyChnaged( EChangeType.Created, h );
+						OnHierarchyChanged( EChangeType.Created, h );
 					}
 				}
 			}

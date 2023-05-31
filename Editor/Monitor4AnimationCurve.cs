@@ -15,19 +15,19 @@ public class Monitor4AnimationCurve : EditorWindow
 			return;
 
 		_monitorTransform = null;
-		HierarchyChangedDetecter.OnHierarchyChnaged += MonitorGameObject;
+		HierarchyChangedDetector.OnHierarchyChanged += MonitorGameObject;
 	}
 
 	void OnDisable()
 	{
-		HierarchyChangedDetecter.OnHierarchyChnaged -= MonitorGameObject;
+		HierarchyChangedDetector.OnHierarchyChanged -= MonitorGameObject;
 	}
 
 	string GetRelativeName( Transform t, bool includeSelf )
 	{
 		if( t == null )
 			return string.Empty;
-		
+
 		string path = includeSelf ? t.name : string.Empty;
 		while( t != _monitorTransform && t.parent != null )
 		{
@@ -44,39 +44,39 @@ public class Monitor4AnimationCurve : EditorWindow
 		return path;
 	}
 
-	string GetLastRelativeName( HierarchyChangedDetecter.EChangeType type, HierarchyChangedDetecter.HierarchySnapshot snapshot )
+	string GetLastRelativeName( HierarchyChangedDetector.EChangeType type, HierarchyChangedDetector.HierarchySnapshot snapshot )
 	{
-		if( type == HierarchyChangedDetecter.EChangeType.Renamed )
+		if( type == HierarchyChangedDetector.EChangeType.Renamed )
 		{
 			return GetRelativeName( snapshot.me, false ) + snapshot.name;
 		}
-		else if( type == HierarchyChangedDetecter.EChangeType.Parented )
+		else if( type == HierarchyChangedDetector.EChangeType.Parented )
 		{
 			if( snapshot.parent == null || !snapshot.parent.IsChildOf( _monitorTransform ) )
 				return string.Empty;
-			
+
 			string path = GetRelativeName( snapshot.parent, true );
 			if( string.IsNullOrEmpty( path ) )
 				return snapshot.me.name;
 			else
 				return path + "/" + snapshot.me.name;
 		}
-		else if( type == HierarchyChangedDetecter.EChangeType.Created )
+		else if( type == HierarchyChangedDetector.EChangeType.Created )
 		{
 		}
-		else if( type == HierarchyChangedDetecter.EChangeType.Deleted )
+		else if( type == HierarchyChangedDetector.EChangeType.Deleted )
 		{
 		}
 
 		return string.Empty;
 	}
 
-	void MonitorGameObject( HierarchyChangedDetecter.EChangeType type, HierarchyChangedDetecter.HierarchySnapshot snapshot )
+	void MonitorGameObject( HierarchyChangedDetector.EChangeType type, HierarchyChangedDetector.HierarchySnapshot snapshot )
 	{
 		if( _monitorTransform == null )
 			return;
 
-		if( type == HierarchyChangedDetecter.EChangeType.Deleted )
+		if( type == HierarchyChangedDetector.EChangeType.Deleted )
 		{
 			if( snapshot.parent == null )
 				return;
@@ -84,7 +84,7 @@ public class Monitor4AnimationCurve : EditorWindow
 				return;
 		}
 
-		if( type == HierarchyChangedDetecter.EChangeType.Parented )
+		if( type == HierarchyChangedDetector.EChangeType.Parented )
 		{
 			if( snapshot.me.parent == null )
 				return;
@@ -97,7 +97,7 @@ public class Monitor4AnimationCurve : EditorWindow
 
 		if( string.IsNullOrEmpty( oldPath ) )
 			return;
-		
+
 		bool changed = false;
 		AnimationClip[] anims = AnimationUtility.GetAnimationClips( _monitorTransform.gameObject );
 
@@ -140,7 +140,7 @@ public class Monitor4AnimationCurve : EditorWindow
 					}
 				}
 			}
-				
+
 		}
 
 		if( changed )
@@ -152,10 +152,10 @@ public class Monitor4AnimationCurve : EditorWindow
 	}
 
 	void OnGUI ()
-	{	
+	{
 		_monitorTransform = EditorGUILayout.ObjectField( "Monitor", _monitorTransform, typeof( Transform ), true ) as Transform;
 	}
-	
+
 	[MenuItem("Tools/Monitor for Animation Curve", false, 0)]
 	static public void OpenWindow()
 	{
