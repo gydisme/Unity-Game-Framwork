@@ -9,6 +9,4 @@
 
 ## History
 
-This project is forked from https://github.com/gydisme/Unity-Game-Framwork/ and packaged for UPM with minimal code changes.
-
-Original code [here](https://github.com/gydisme/Unity-Game-Framwork/tree/master/Assets/Editor/CustomEditor/Monitor4AnimationCurve).
+This project was created by Chun-Lung(Gyd) Tseng. This is a fork of his [original repo](https://github.com/gydisme/Unity-Game-Framwork), with minimal changes including support for UPM. Permission to repackage this code has been granted.
