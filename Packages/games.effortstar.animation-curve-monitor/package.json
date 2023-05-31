@@ -1,0 +1,18 @@
+{
+  "name": "games.effortstar.animation-curve-monitor",
+  "version": "1.0.0",
+  "displayName": "Animation Curve Monitor",
+  "description": "Syncs animation curve names with object renames.",
+  "unity": "2020.3",
+  "unityRelease": "21f1",
+  "licensesUrl": "https://choosealicense.com/licenses/mit/",
+  "dependencies": {},
+  "devDependencies": {},
+  "samples": [],
+  "author": {
+    "name": "Rhys van der Waerden",
+    "email": "rhys@effortstar.games",
+    "url": "https://effortstar.games"
+  },
+  "type": "tool"
+}
