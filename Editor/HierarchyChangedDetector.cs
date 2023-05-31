@@ -1,20 +1,12 @@
-﻿#define Debug_
-
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Linq;
-using System.Reflection;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
+using System;
+
 namespace HierarchyHelper
 {
-	#if UNITY_EDITOR
 	[InitializeOnLoad]
-	#endif
-	public static class HierarchyChangedDetecter
+	public static class HierarchyChangedDetector
 	{
 		public class HierarchySnapshot
 		{
@@ -31,13 +23,12 @@ namespace HierarchyHelper
 			Deleted
 		}
 
-		static List<HierarchySnapshot> _hierarchySnapshots = null;
-		static List<Transform> _hierarchyTransforms = null;
+		readonly static List<HierarchySnapshot> _hierarchySnapshots = null;
+		readonly static List<Transform> _hierarchyTransforms = null;
 
-		public delegate void onHierarchyChnaged( EChangeType type, HierarchySnapshot snapshot );
-		public static onHierarchyChnaged OnHierarchyChnaged = delegate( EChangeType type, HierarchySnapshot snapshot ) {};
+		public static Action<EChangeType, HierarchySnapshot> OnHierarchyChange = ( EChangeType type, HierarchySnapshot snapshot ) => {};
 
-		static HierarchyChangedDetecter()
+		static HierarchyChangedDetector()
 		{
 			_hierarchySnapshots = new List<HierarchySnapshot>();
 			_hierarchyTransforms = new List<Transform>();
@@ -50,16 +41,8 @@ namespace HierarchyHelper
 				_hierarchyTransforms.Add( t );
 			}
 
-#if UNITY_2017 || UNITY_5_6
-            EditorApplication.hierarchyWindowChanged += OnHierarchyChangeCheck;
-#else
-            EditorApplication.hierarchyChanged += OnHierarchyChangeCheck;
-#endif
-
-#if Debug
-			OnHierarchyChnaged += OnHierarchyChange;
-#endif
-        }
+			EditorApplication.hierarchyChanged += HandleHierarchyChange;
+		}
 
 		static HierarchySnapshot CreateSnapshot( Transform t )
 		{
@@ -70,9 +53,9 @@ namespace HierarchyHelper
 			return h;
 		}
 
-		static void OnHierarchyChangeCheck()
+		static void HandleHierarchyChange()
 		{
-            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 			bool found = false;
 			for( int i=0;i<_hierarchySnapshots.Count;)
 			{
@@ -81,14 +64,14 @@ namespace HierarchyHelper
 				{
 					_hierarchySnapshots.RemoveAt( i );
 					_hierarchyTransforms.RemoveAt( i );
-					OnHierarchyChnaged( EChangeType.Deleted, h );
+					OnHierarchyChange( EChangeType.Deleted, h );
 					found = true;
 					continue;
 				}
 
 				else if( h.parent != h.me.parent )
 				{
-					OnHierarchyChnaged( EChangeType.Parented, h );
+					OnHierarchyChange( EChangeType.Parented, h );
 					h.parent = h.me.parent;
 					found = true;
 					break;
@@ -96,7 +79,7 @@ namespace HierarchyHelper
 
 				else if( h.name != h.me.name )
 				{
-					OnHierarchyChnaged( EChangeType.Renamed, h );
+					OnHierarchyChange( EChangeType.Renamed, h );
 					h.name = h.me.name;
 					found = true;
 					break;
@@ -116,21 +99,10 @@ namespace HierarchyHelper
 						_hierarchySnapshots.Add( h );
 						_hierarchyTransforms.Add( t );
 
-						OnHierarchyChnaged( EChangeType.Created, h );
+						OnHierarchyChange( EChangeType.Created, h );
 					}
 				}
 			}
-		}
-
-		static void OnHierarchyChange( EChangeType type, HierarchySnapshot snapshot )
-		{
-			string log = type.ToString();
-			if( snapshot.me != null )
-			{
-				log += " name:" + snapshot.me.name + ", parent: " + snapshot.me.parent;
-			}
-			log += " snapshot name: " + snapshot.name + ", parent: " + snapshot.parent;
-			Debug.Log( log );
 		}
 	}
 }

@@ -1,12 +1,14 @@
-Unity Game Framework
-=====
+# Animation Curve Monitor
+## Usage
 
-environment: Unity(5.0+)
+- Tools/Animation Curve Monitor
+- Drag monitor GameObject with Animation or Animator to Object Field
+- Enjoy
 
-- Author: Chun-Lung(Gyd) Tseng
-- Email: kingterrygyd@gmail.com
-- Twitter: @kingterrygyd
-- Facebook: facebook.com/barbariangyd
-- Donation: <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4YYN5LS3Y3S32&source=url'><img alt='Donate with PayPal button' src='https://www.paypalobjects.com/en_US/TW/i/btn/btn_donateCC_LG.gif' border='0' ></a>
+![](http://i.imgur.com/39ALYQW.gif)
 
-Kaohsiung, Taiwan, ROC
+## History
+
+This project is forked from https://github.com/gydisme/Unity-Game-Framwork/ and packaged for OpenUPM with minimal code changes.
+
+Original code [here](https://github.com/gydisme/Unity-Game-Framwork/tree/master/Assets/Editor/CustomEditor/Monitor4AnimationCurve).
