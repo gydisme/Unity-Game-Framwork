@@ -38,7 +38,7 @@ namespace HierarchyHelper
 			_hierarchyTransforms = new List<Transform>();
 			_onHierarchyChange = onHierarchyChange;
 
-			foreach( Transform t in root.GetComponentsInChildren<Transform>() )
+			foreach( Transform t in GetHierarchy() )
 			{
 				HierarchySnapshot h = CreateSnapshot( t );
 				_hierarchySnapshots.Add( h );
@@ -52,6 +52,9 @@ namespace HierarchyHelper
 		{
 			EditorApplication.hierarchyChanged -= HandleHierarchyChange;
 		}
+
+		Transform[] GetHierarchy() =>
+			_root.GetComponentsInChildren<Transform>(includeInactive: true);
 
 		static HierarchySnapshot CreateSnapshot( Transform t )
 		{
@@ -99,7 +102,7 @@ namespace HierarchyHelper
 
 			if( !found )
 			{
-				foreach( Transform t in _root.GetComponentsInChildren<Transform>() )
+				foreach( Transform t in GetHierarchy() )
 				{
 					if( !_hierarchyTransforms.Contains( t ) )
 					{
