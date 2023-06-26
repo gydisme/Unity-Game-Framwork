@@ -15,12 +15,12 @@ public class AnimationCurveMonitor : EditorWindow
 			return;
 
 		_monitorTransform = null;
-		HierarchyChangedDetector.OnHierarchyChange += MonitorGameObject;
+		HierarchyChangedDetector.OnHierarchyChange += HandleHierarchyChange;
 	}
 
 	void OnDisable()
 	{
-		HierarchyChangedDetector.OnHierarchyChange -= MonitorGameObject;
+		HierarchyChangedDetector.OnHierarchyChange -= HandleHierarchyChange;
 	}
 
 	string GetRelativeName( Transform t, bool includeSelf )
@@ -66,7 +66,7 @@ public class AnimationCurveMonitor : EditorWindow
 		}
 	}
 
-	void MonitorGameObject( HierarchyChangedDetector.EChangeType type, HierarchyChangedDetector.HierarchySnapshot snapshot )
+	void HandleHierarchyChange( HierarchyChangedDetector.EChangeType type, HierarchyChangedDetector.HierarchySnapshot snapshot )
 	{
 		if( _monitorTransform == null )
 			return;
