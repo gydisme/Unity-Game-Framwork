@@ -8,6 +8,7 @@ using HierarchyHelper;
 public class AnimationCurveMonitor : EditorWindow
 {
 	private Transform _monitorTransform = null;
+	HierarchyChangedDetector _detector = null;
 
 	void OnEnable ()
 	{
@@ -15,12 +16,12 @@ public class AnimationCurveMonitor : EditorWindow
 			return;
 
 		_monitorTransform = null;
-		HierarchyChangedDetector.OnHierarchyChange += HandleHierarchyChange;
 	}
 
 	void OnDisable()
 	{
-		HierarchyChangedDetector.OnHierarchyChange -= HandleHierarchyChange;
+		_detector.Dispose();
+		_detector = null;
 	}
 
 	string GetRelativeName( Transform t, bool includeSelf )
@@ -148,7 +149,23 @@ public class AnimationCurveMonitor : EditorWindow
 
 	void OnGUI ()
 	{
-		_monitorTransform = EditorGUILayout.ObjectField( "Monitor", _monitorTransform, typeof( Transform ), true ) as Transform;
+		using var check = new EditorGUI.ChangeCheckScope();
+
+		_monitorTransform = EditorGUILayout.ObjectField(
+			"Monitor",
+			_monitorTransform,
+			typeof( Transform ),
+			true
+		) as Transform;
+
+		if (check.changed)
+		{
+			_detector?.Dispose();
+			if (_monitorTransform != null)
+			{
+				_detector = new HierarchyChangedDetector(_monitorTransform, HandleHierarchyChange);
+			}
+		}
 	}
 
 	[MenuItem("Tools/Animation Curve Monitor", false, 0)]
