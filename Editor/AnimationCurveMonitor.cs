@@ -46,29 +46,24 @@ public class AnimationCurveMonitor : EditorWindow
 
 	string GetLastRelativeName( HierarchyChangedDetector.EChangeType type, HierarchyChangedDetector.HierarchySnapshot snapshot )
 	{
-		if( type == HierarchyChangedDetector.EChangeType.Renamed )
+		switch ( type )
 		{
-			return GetRelativeName( snapshot.me, false ) + snapshot.name;
-		}
-		else if( type == HierarchyChangedDetector.EChangeType.Parented )
-		{
-			if( snapshot.parent == null || !snapshot.parent.IsChildOf( _monitorTransform ) )
+			case HierarchyChangedDetector.EChangeType.Renamed:
+				return GetRelativeName( snapshot.me, false ) + snapshot.name;
+			case HierarchyChangedDetector.EChangeType.Parented:
+				if( snapshot.parent == null || !snapshot.parent.IsChildOf( _monitorTransform ) )
+					return string.Empty;
+
+				string path = GetRelativeName( snapshot.parent, true );
+				if( string.IsNullOrEmpty( path ) )
+					return snapshot.me.name;
+				else
+					return path + "/" + snapshot.me.name;
+			case HierarchyChangedDetector.EChangeType.Created:
+			case HierarchyChangedDetector.EChangeType.Deleted:
+			default:
 				return string.Empty;
-
-			string path = GetRelativeName( snapshot.parent, true );
-			if( string.IsNullOrEmpty( path ) )
-				return snapshot.me.name;
-			else
-				return path + "/" + snapshot.me.name;
 		}
-		else if( type == HierarchyChangedDetector.EChangeType.Created )
-		{
-		}
-		else if( type == HierarchyChangedDetector.EChangeType.Deleted )
-		{
-		}
-
-		return string.Empty;
 	}
 
 	void MonitorGameObject( HierarchyChangedDetector.EChangeType type, HierarchyChangedDetector.HierarchySnapshot snapshot )
