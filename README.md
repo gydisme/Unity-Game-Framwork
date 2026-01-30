@@ -7,6 +7,6 @@ environment: Unity(5.0+)
 - Email: kingterrygyd@gmail.com
 - Twitter: @kingterrygyd
 - Facebook: facebook.com/barbariangyd
-- Donation: <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4YYN5LS3Y3S32&source=url'><img alt='Donate with PayPal button' src='https://www.paypalobjects.com/en_US/TW/i/btn/btn_donateCC_LG.gif' border='0' ></a>
+- [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/gydisme)
 
 Kaohsiung, Taiwan, ROC
